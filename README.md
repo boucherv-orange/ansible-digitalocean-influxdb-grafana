@@ -12,7 +12,7 @@ installation.
 ```
 apt-get install python-devel python-pip
 sudo pip install ansible --upgrade
-git clone https://github.com/bitmazk/ansible-digitalocean-influxdb-grafana.git
+git clone https://github.com/boucherv-orange/ansible-digitalocean-influxdb-grafana.git
 cd ansible-digitalocean-influxdb-grafana
 cp hosts.sample hosts
 vim hosts
