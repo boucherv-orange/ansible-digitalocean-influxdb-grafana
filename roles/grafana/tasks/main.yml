@@ -1,28 +1,25 @@
 ---
-- name: grafana - create folders
-  shell: mkdir -p /var/www/
-
 - name: grafana - check if sources have been downloaded
-  stat: path=~/src/{{ GRAFANA_SOURCE_FILENAME }}.tar.gz
+  stat: path=~/src/{{ GRAFANA_SOURCE_FILENAME }}.deb
   register: grafana_download
 
-- name: grafana - download sources
-  shell: wget http://grafanarel.s3.amazonaws.com/{{ GRAFANA_SOURCE_FILENAME }}.tar.gz
+- name: grafana - update repo
+  shell: sudo apt-get update
+
+- name: grafana - install requierment
+  shell: sudo apt-get install -y adduser libfontconfig
+
+- name: grafana - download package
+  shell: wget https://grafanarel.s3.amazonaws.com/builds/{{ GRAFANA_SOURCE_FILENAME }}.deb
   when: not grafana_download.stat.exists
   args:
     chdir: ~/src
 
-- name: grafana - extract archive
-  shell: tar -xvf {{ GRAFANA_SOURCE_FILENAME }}.tar.gz
-  when: not grafana_download.stat.exists
-  args:
-    chdir: ~/src
+- name: grafana - install
+  shell: dpkg -i ~/src/{{ GRAFANA_SOURCE_FILENAME }}.deb
 
-- name: grafana - copy source
-  shell: cp -rf ~/src/{{ GRAFANA_SOURCE_FILENAME }} /var/www/grafana
+- name: grafana - start service
+  service: name=grafana-server state=started
 
-- name: grafana - chown
-  shell: chown -R www-data:www-data /var/www/grafana
-
-- name: grafana - copy config
-  template: src=config.js dest=/var/www/grafana/
+- name: grafana - wait for service
+  wait_for: port=3000 delay=5

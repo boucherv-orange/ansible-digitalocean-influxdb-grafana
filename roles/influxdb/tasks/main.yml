@@ -7,13 +7,13 @@
   register: influxdb_download
 
 - name: influxdb - download sources
-  shell: wget http://s3.amazonaws.com/influxdb/influxdb_latest_amd64.deb
+  shell: wget https://dl.influxdata.com/influxdb/releases/influxdb_0.8.8_amd64.deb
   when: not influxdb_download.stat.exists
   args:
     chdir: ~/src
 
 - name: influxdb - install
-  shell: dpkg -i ~/src/influxdb_latest_amd64.deb
+  shell: dpkg -i ~/src/influxdb_0.8.8_amd64.deb
 
 - name: influxdb - start service
   service: name=influxdb state=started
